@@ -16,31 +16,41 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
         // todo: find and apply force only on the closest mates
     }*/
 
-  for (const Boid* boidTmp : neighborhood)
-  {
-    //Remove self
-    if(boidTmp->getPosition() == boid->getPosition()) {
-      continue;
+  if (neighborhood.size() > 1) {
+
+    int closeBoids = 0;
+
+    for (const Boid* boidTmp : neighborhood)
+    {
+      //Remove self
+      if(boidTmp->getPosition() == boid->getPosition()) {
+        continue;
+      }
+
+      //Calc Separation vector
+      Vector2f separationVec = boid->getPosition() - boidTmp->getPosition();
+
+      //Calc distance
+      float distance = sqrt((separationVec.x * separationVec.x) + (separationVec.y * separationVec.y));
+
+      //If inside sep radius add force
+      if (distance < desiredDistance && distance > 0.01f) {
+        //normalize sep vector
+        separationVec = separationVec / distance;
+        float forceApply = 1 / distance;
+        separatingForce += (separationVec * forceApply) / (desiredDistance / distance);
+        closeBoids++;
+      }
     }
 
-    //Calc Separation vector
-    Vector2f separationVec = boid->getPosition() - boidTmp->getPosition();
-
-    //Calc distance
-    float distance = sqrt((separationVec.x * separationVec.x) + (separationVec.y * separationVec.y));
-
-    //If inside sep radius add force
-    if (distance < desiredDistance && distance > 0.01f) {
-      //normalize sep vector
-      separationVec = separationVec / distance;
-      float forceApply = 1 / distance;
-      separatingForce = separationVec * forceApply;
+    if (closeBoids > 0) {
+      separatingForce = separatingForce / static_cast<float>(closeBoids);
     }
   }
 
   separatingForce = Vector2f::normalized(separatingForce);
 
-  return separatingForce * weight;
+  return separatingForce;
 }
 
 bool SeparationRule::drawImguiRuleExtra() {
