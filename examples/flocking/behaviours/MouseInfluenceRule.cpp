@@ -12,7 +12,7 @@ Vector2f MouseInfluenceRule::computeForce(const std::vector<Boid*>& neighborhood
           float distance = Vector2f::getMagnitude(displacement); // todo: change this
 
           //The force is inversely proportional to distance
-          Vector2f force = displacement / (100.0f / distance); // todo: change this
+          Vector2f force = displacement / pow(2, 1.0f / distance); // todo: change this
 
           if (isRepulsive)
               force *= -1.f;
