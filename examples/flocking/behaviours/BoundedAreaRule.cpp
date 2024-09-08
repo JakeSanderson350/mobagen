@@ -13,16 +13,20 @@ Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, B
 
   Point2D screenBounds = this->world->engine->window->size();
 
+  //Left side of screen
   if (position.x < desiredDistance) {
     force.x += static_cast<float>(desiredDistance) / position.x;
   }
+  //Right side
   else if (position.x > screenBounds.x - desiredDistance) {
     force.x += static_cast<float>(desiredDistance) / (position.x - static_cast<float>(screenBounds.x));
   }
 
+  //Bottom
   if (position.y < desiredDistance) {
     force.y += static_cast<float>(desiredDistance) / position.y;
   }
+  //Top
   else if (position.y > screenBounds.y - desiredDistance) {
     force.y += static_cast<float>(desiredDistance) / (position.y - static_cast<float>(screenBounds.y));
   }
