@@ -10,6 +10,8 @@ public:
   void Step(World& world) override;
   int CountNeighbors(World& world, Point2D point);
   GameOfLifeTileSetEnum GetTileSet() override { return GameOfLifeTileSetEnum::Hexagon; };
+private:
+  bool isEven(const int num);
 };
 
 #endif  // MOBAGEN_EXAMPLES_LIFE_RULES_HEXAGONGAMEOFLIFE_H_
