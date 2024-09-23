@@ -34,6 +34,21 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   std::vector<Point2D> visitables;
 
   // todo: implement this
+  //Check if in bounds
+
+  //Check colors of neighboring points to determine if they have been visitable
+  if(w->GetNodeColor(p.Up()) == Color::DarkGray) {
+    visitables.push_back(Point2D(p.x, p.y + 1));
+  }
+  if(w->GetEast(p)) {
+    visitables.push_back(Point2D(p.x + 1, p.y));
+  }
+  if(w->GetSouth(p)) {
+    visitables.push_back(Point2D(p.x, p.y - 1));
+  }
+  if(w->GetWest(p)) {
+    visitables.push_back(Point2D(p.x - 1, p.y));
+  }
 
   return visitables;
 }
