@@ -4,6 +4,10 @@
 #include <climits>
 bool RecursiveBacktrackerExample::Step(World* w) {
   // todo: implement this
+  if(!stack.empty()) {
+    
+  }
+
   return false;
 }
 
@@ -36,17 +40,17 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   // todo: implement this
   //Check if in bounds
 
-  //Check colors of neighboring points to determine if they have been visitable
+  //Check colors of neighboring points to determine if they have been visited
   if(w->GetNodeColor(p.Up()) == Color::DarkGray) {
     visitables.push_back(Point2D(p.x, p.y + 1));
   }
-  if(w->GetEast(p)) {
+  if(w->GetNodeColor(p.Right()) == Color::DarkGray) {
     visitables.push_back(Point2D(p.x + 1, p.y));
   }
-  if(w->GetSouth(p)) {
+  if(w->GetNodeColor(p.Down()) == Color::DarkGray) {
     visitables.push_back(Point2D(p.x, p.y - 1));
   }
-  if(w->GetWest(p)) {
+  if(w->GetNodeColor(p.Left()) == Color::DarkGray) {
     visitables.push_back(Point2D(p.x - 1, p.y));
   }
 
