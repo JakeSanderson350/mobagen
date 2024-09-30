@@ -13,6 +13,9 @@ private:
   Point2D randomStartPoint(World* world);
   std::vector<Point2D> getVisitables(World* w, const Point2D& p);
 
+  int getRandomNumber();
+  int randomNumIndex = 0;
+
 public:
   RecursiveBacktrackerExample() = default;
   std::string GetName() override { return "Recursive Back-Tracker"; };
