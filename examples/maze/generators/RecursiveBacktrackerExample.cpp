@@ -14,6 +14,7 @@ bool RecursiveBacktrackerExample::Step(World* w) {
 
   if(!stack.empty()) {
     Point2D pointTmp = stack.back();
+    Node nodeTmp = w->GetNode(pointTmp);
     std::vector<Point2D> visitables = getVisitables(w, pointTmp);
 
     //Check for neighbors
@@ -22,23 +23,25 @@ bool RecursiveBacktrackerExample::Step(World* w) {
       w->SetNodeColor(pointTmp, Color::Red);
 
       //Choose neighbor
-      std::cout << getRandomNumber() << '\n';
+      std::cout << getRandomNumber() % visitables.size() << "\n";
       Point2D nextPoint = visitables[getRandomNumber() % visitables.size()];
       Point2D direction = nextPoint - pointTmp;
 
       //Remove the wall in direction
       if(direction.y == -1) { //Up
-        w->GetNode(pointTmp).SetNorth(false);
+        w->SetNorth(pointTmp, false);
       }
       else if (direction.x == 1) { //Right
-        w->GetNode(pointTmp).SetEast(false);
+        w->SetEast(pointTmp, false);
       }
       else if (direction.y == 1) { //Down
-        w->GetNode(pointTmp).SetSouth(false);
+        w->SetSouth(pointTmp, false);
       }
       else if (direction.x == -1) { //Left
-        w->GetNode(pointTmp).SetWest(false);
+        w->SetWest(pointTmp, false);
       }
+      //Sets node to nodeTmp values
+      //w->SetNode(pointTmp, nodeTmp);
 
       //Add new point to stack
       stack.push_back(nextPoint);
@@ -98,16 +101,16 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   //Check if in bounds
 
   //Check colors of neighboring points to determine if they have been visited
-  if(w->GetNodeColor(p.Up()) == Color::DarkGray) {
+  if(w->GetNodeColor(p.Up()) == Color::DarkGray/* && abs(p.y - 1) <= sideOver2*/) {
     visitables.push_back(Point2D(p.x, p.y + 1));
   }
-  if(w->GetNodeColor(p.Right()) == Color::DarkGray) {
+  if(w->GetNodeColor(p.Right()) == Color::DarkGray /*&& abs(p.x + 1) <= sideOver2*/) {
     visitables.push_back(Point2D(p.x + 1, p.y));
   }
-  if(w->GetNodeColor(p.Down()) == Color::DarkGray) {
+  if(w->GetNodeColor(p.Down()) == Color::DarkGray /*&& abs(p.y + 1) <= sideOver2*/) {
     visitables.push_back(Point2D(p.x, p.y - 1));
   }
-  if(w->GetNodeColor(p.Left()) == Color::DarkGray) {
+  if(w->GetNodeColor(p.Left()) == Color::DarkGray /*&& abs(p.x - 1) <= sideOver2*/) {
     visitables.push_back(Point2D(p.x - 1, p.y));
   }
 
