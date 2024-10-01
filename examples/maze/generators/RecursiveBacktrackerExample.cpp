@@ -4,7 +4,6 @@
 
 #include <climits>
 bool RecursiveBacktrackerExample::Step(World* w) {
-  // todo: implement this
   //Add initial point to stack. Code by Gerald Kaufman
   auto sideOver2 = w->GetSize() / 2;
   if (stack.empty() && !visited[-sideOver2][-sideOver2]) {
@@ -14,34 +13,31 @@ bool RecursiveBacktrackerExample::Step(World* w) {
 
   if(!stack.empty()) {
     Point2D pointTmp = stack.back();
-    Node nodeTmp = w->GetNode(pointTmp);
     std::vector<Point2D> visitables = getVisitables(w, pointTmp);
 
     //Check for neighbors
     if (!visitables.empty()) {
       //Mark top cell as visited
       w->SetNodeColor(pointTmp, Color::Red);
+      visited[pointTmp.x][pointTmp.y] = true;
 
       //Choose neighbor
-      std::cout << getRandomNumber() % visitables.size() << "\n";
       Point2D nextPoint = visitables[getRandomNumber() % visitables.size()];
-      Point2D direction = nextPoint - pointTmp;
+      Point2D directionToPoint = nextPoint - pointTmp;
 
       //Remove the wall in direction
-      if(direction.y == -1) { //Up
+      if(directionToPoint.y == -1) { //Up
         w->SetNorth(pointTmp, false);
       }
-      else if (direction.x == 1) { //Right
+      else if (directionToPoint.x == 1) { //Right
         w->SetEast(pointTmp, false);
       }
-      else if (direction.y == 1) { //Down
+      else if (directionToPoint.y == 1) { //Down
         w->SetSouth(pointTmp, false);
       }
-      else if (direction.x == -1) { //Left
+      else if (directionToPoint.x == -1) { //Left
         w->SetWest(pointTmp, false);
       }
-      //Sets node to nodeTmp values
-      //w->SetNode(pointTmp, nodeTmp);
 
       //Add new point to stack
       stack.push_back(nextPoint);
@@ -51,7 +47,7 @@ bool RecursiveBacktrackerExample::Step(World* w) {
       stack.pop_back();
     }
   }
-
+  //If stack empty return false
   return !stack.empty();
 }
 
@@ -97,20 +93,17 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   auto sideOver2 = w->GetSize() / 2;
   std::vector<Point2D> visitables;
 
-  // todo: implement this
-  //Check if in bounds
-
-  //Check colors of neighboring points to determine if they have been visited
-  if(w->GetNodeColor(p.Up()) == Color::DarkGray/* && abs(p.y - 1) <= sideOver2*/) {
-    visitables.push_back(Point2D(p.x, p.y + 1));
-  }
-  if(w->GetNodeColor(p.Right()) == Color::DarkGray /*&& abs(p.x + 1) <= sideOver2*/) {
-    visitables.push_back(Point2D(p.x + 1, p.y));
-  }
-  if(w->GetNodeColor(p.Down()) == Color::DarkGray /*&& abs(p.y + 1) <= sideOver2*/) {
+  //Check colors of neighboring points, visited list, and bounds to determine if they have been visited
+  if(w->GetNodeColor(p.Up()) == Color::DarkGray && !visited[p.x][p.y - 1] && abs(p.y - 1) <= sideOver2) {
     visitables.push_back(Point2D(p.x, p.y - 1));
   }
-  if(w->GetNodeColor(p.Left()) == Color::DarkGray /*&& abs(p.x - 1) <= sideOver2*/) {
+  if(w->GetNodeColor(p.Right()) == Color::DarkGray && !visited[p.x + 1][p.y] && abs(p.x + 1) <= sideOver2) {
+    visitables.push_back(Point2D(p.x + 1, p.y));
+  }
+  if(w->GetNodeColor(p.Down()) == Color::DarkGray && !visited[p.x][p.y + 1] && abs(p.y + 1) <= sideOver2) {
+    visitables.push_back(Point2D(p.x, p.y + 1));
+  }
+  if(w->GetNodeColor(p.Left()) == Color::DarkGray && !visited[p.x - 1][p.y] && abs(p.x - 1) <= sideOver2) {
     visitables.push_back(Point2D(p.x - 1, p.y));
   }
 
