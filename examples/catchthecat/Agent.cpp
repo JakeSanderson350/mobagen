@@ -1,7 +1,4 @@
 #include "Agent.h"
-#include <unordered_set>
-#include <unordered_map>
-#include <queue>
 #include "World.h"
 using namespace std;
 std::vector<Point2D> Agent::generatePath(World* w) {
@@ -21,6 +18,7 @@ std::vector<Point2D> Agent::generatePath(World* w) {
     // remove the current from frontierset
     // mark current as visited
     // getVisitableNeightbors(world, current) returns a vector of neighbors that are not visited, not cat, not block, not in the queue
+      //Check neighbors against visited and queue
     // iterate over the neighs:
     // for every neighbor set the cameFrom
     // enqueue the neighbors to frontier and frontierset
@@ -31,4 +29,40 @@ std::vector<Point2D> Agent::generatePath(World* w) {
   // if there isnt a reachable border, just return empty vector
   // if your vector is filled from the border to the cat, the first element is the catcher move, and the last element is the cat move
   return vector<Point2D>();
+}
+
+std::vector<Point2D> Agent::getVisitableNeighbors(World* w, const Point2D& p) {
+  std::vector<Point2D> visitables;
+  Point2D pointTmp;
+
+  //Check if not cat, not block, and in bounds
+  pointTmp = w->NW(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->NW(p));
+  }
+
+  pointTmp = w->NE(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->NE(p));
+  }
+
+  pointTmp = w->E(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->E(p));
+  }
+
+  pointTmp = w->SE(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->SE(p));
+  }
+
+  pointTmp = w->SW(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->SW(p));
+  }
+
+  pointTmp = w->W(p);
+  if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
+    visitables.push_back(w->W(p));
+  }
 }
