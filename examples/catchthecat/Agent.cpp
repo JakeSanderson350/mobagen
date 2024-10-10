@@ -1,23 +1,69 @@
 #include "Agent.h"
 #include "World.h"
+
 using namespace std;
+
+struct ASNode {
+  Point2D point;
+  int accDist;
+  int heuristicDist;
+
+  //Operator < for priority queue
+  bool operator<(const ASNode& rhs) const {
+    //Sign is reversed because we are searching for the smallest cost
+    return accDist + heuristicDist > rhs.accDist + rhs.heuristicDist;
+  }
+
+  int distanceTo(const Point2D &other) const {
+    // manhattan distance
+    return abs(point.x - other.x) + abs(point.y - other.y);
+  }
+
+  static int distanceToBorder(const Point2D &p, int sideSizeOver2) {
+    // right side
+    if (p.y - p.x < 0 && p.x + p.y > 0) {
+      return sideSizeOver2 - p.x;
+    }
+    // top side
+    if (p.x - p.y < 0 && p.x + p.y > 0) {
+      return sideSizeOver2 - p.y;
+    }
+    // left side
+    if (p.x - p.y < 0 && p.x + p.y < 0) {
+      return sideSizeOver2 - abs(p.x);
+    }
+    // bottom side
+    if (p.x - p.y > 0 && p.x + p.y < 0) {
+      return sideSizeOver2 - abs(p.y);
+    }
+    //(0,0) special exception
+    return sideSizeOver2;
+  }
+};
+
+
+
 std::vector<Point2D> Agent::generatePath(World* w) {
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
-  priority_queue<Point2D> frontier;                   // to store next ones to visit
+  priority_queue<ASNode> frontier;                   // to store next ones to visit
   unordered_set<Point2D> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
   unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element dont exist [] will give you wrong results
 
+  auto sideOver2 = w->getWorldSideSize() / 2;
+
   // bootstrap state
   auto catPos = w->getCat();
-  frontier.push(catPos);
+  frontier.push({.point = catPos, .accDist = 0, .heuristicDist = ASNode::distanceToBorder(catPos, sideOver2)});
   frontierSet.insert(catPos);
   Point2D borderExit = Point2D::INFINITE;  // if at the end of the loop we dont find a border, we have to return random points
-  auto sideOver2 = w->getWorldSideSize() / 2;
+
 
   while (!frontier.empty()) {
     // get the current from frontier
     // remove the current from frontierset
-    Point2D pointTmp = frontier.top();
+    ASNode nodeTmp = frontier.top();
+    frontier.pop();
+    Point2D pointTmp = nodeTmp.point;
     frontierSet.erase(pointTmp);
 
     // mark current as visited
@@ -32,7 +78,7 @@ std::vector<Point2D> Agent::generatePath(World* w) {
     // getVisitableNeightbors(world, current) returns a vector of neighbors that are not visited, not cat, not block, not in the queue
     vector<Point2D> allNeighbors = getVisitableNeighbors(w, pointTmp);
     vector<Point2D> visitableNeighbors;
-      //Check neighbors against visited and queue
+    //Check neighbors against visited and queue
     for (auto neighbor : allNeighbors) {
       if (!visited[neighbor] && !frontierSet.contains(neighbor)) {
         visitableNeighbors.push_back(neighbor);
@@ -44,7 +90,7 @@ std::vector<Point2D> Agent::generatePath(World* w) {
     // enqueue the neighbors to frontier and frontierset
     for (auto neighbor : visitableNeighbors) {
       cameFrom[neighbor] = pointTmp;
-      frontier.push(neighbor);
+      frontier.push({.point = neighbor, .accDist = nodeTmp.accDist + 1, .heuristicDist = ASNode::distanceToBorder(neighbor, sideOver2)});
       frontierSet.insert(neighbor);
     }
 
@@ -99,4 +145,6 @@ std::vector<Point2D> Agent::getVisitableNeighbors(World* w, const Point2D& p) {
   if (w->getCat() != pointTmp && !w->getContent(pointTmp) && w->isValidPosition(pointTmp)) {
     visitables.push_back(w->W(p));
   }
+
+  return visitables;
 }
