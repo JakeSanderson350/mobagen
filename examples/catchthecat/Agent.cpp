@@ -21,7 +21,7 @@ struct ASNode {
 
   static int distanceToBorder(const Point2D &p, int sideSizeOver2) {
     // right side
-    if (p.y - p.x < 0 && p.x + p.y > 0) {
+    if (p.y - p.x <= 0 && p.y + p.x >= 0) {
       return sideSizeOver2 - p.x;
     }
     // top side
@@ -29,7 +29,7 @@ struct ASNode {
       return sideSizeOver2 - p.y;
     }
     // left side
-    if (p.x - p.y < 0 && p.x + p.y < 0) {
+    if (p.x - p.y <= 0 && p.x + p.y <= 0) {
       return sideSizeOver2 - abs(p.x);
     }
     // bottom side
