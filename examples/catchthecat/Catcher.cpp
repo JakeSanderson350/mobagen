@@ -7,8 +7,11 @@ Point2D Catcher::Move(World* world) {
   std::vector<Point2D> pathToBorder = generatePath(world);
 
   //return first point in path
-  return pathToBorder[0];
+  if (!pathToBorder.empty()) {
+    return pathToBorder[0];
+  }
 
+  //return random point if path is empty
   for (;;) {
     Point2D p = {Random::Range(-side, side), Random::Range(-side, side)};
     auto cat = world->getCat();

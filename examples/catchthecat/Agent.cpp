@@ -14,11 +14,6 @@ struct ASNode {
     return accDist + heuristicDist > rhs.accDist + rhs.heuristicDist;
   }
 
-  int distanceTo(const Point2D &other) const {
-    // manhattan distance
-    return abs(point.x - other.x) + abs(point.y - other.y);
-  }
-
   static int distanceToBorder(const Point2D &p, int sideSizeOver2) {
     // right side
     if (p.y - p.x <= 0 && p.y + p.x >= 0) {
